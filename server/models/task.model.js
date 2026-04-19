@@ -1,17 +1,17 @@
-const { randomUUID } = require('crypto');
+const { randomUUID } = require("crypto");
 
 const tasks = [
   {
     id: randomUUID(),
-    title: 'Set up backend routes',
-    description: 'Create CRUD endpoints for tasks.',
+    title: "Set up backend routes",
+    description: "Create CRUD endpoints for tasks.",
     completed: false,
     createdAt: new Date().toISOString(),
   },
   {
     id: randomUUID(),
-    title: 'Build React UI',
-    description: 'Create task list and task form components.',
+    title: "Build React UI",
+    description: "Create task list and task form components.",
     completed: true,
     createdAt: new Date(Date.now() - 3600000).toISOString(),
   },
@@ -19,7 +19,7 @@ const tasks = [
 
 const listTasks = () => tasks;
 
-const createTask = ({ title, description = '' }) => {
+const createTask = ({ title, description = "" }) => {
   const task = {
     id: randomUUID(),
     title,

@@ -1,147 +1,147 @@
-import { useEffect, useMemo, useState } from 'react'
-import './App.css'
+import { useEffect, useMemo, useState } from "react";
+import "./App.css";
 
-const API_BASE = '/api/tasks'
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api/tasks";
 
 function App() {
-  const [tasks, setTasks] = useState([])
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [filter, setFilter] = useState('all')
-  const [loading, setLoading] = useState(true)
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState('')
+  const [tasks, setTasks] = useState([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [filter, setFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const loadTasks = async () => {
       try {
-        setLoading(true)
-        const response = await fetch(API_BASE)
+        setLoading(true);
+        const response = await fetch(API_BASE);
 
         if (!response.ok) {
-          throw new Error('Failed to load tasks.')
+          throw new Error("Failed to load tasks.");
         }
 
-        const data = await response.json()
-        setTasks(data.tasks)
+        const data = await response.json();
+        setTasks(data.tasks);
       } catch (requestError) {
-        setError(requestError.message)
+        setError(requestError.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadTasks()
-  }, [])
+    loadTasks();
+  }, []);
 
   const visibleTasks = useMemo(() => {
-    if (filter === 'active') {
-      return tasks.filter((task) => !task.completed)
+    if (filter === "active") {
+      return tasks.filter((task) => !task.completed);
     }
 
-    if (filter === 'completed') {
-      return tasks.filter((task) => task.completed)
+    if (filter === "completed") {
+      return tasks.filter((task) => task.completed);
     }
 
-    return tasks
-  }, [tasks, filter])
+    return tasks;
+  }, [tasks, filter]);
 
   const taskCounts = useMemo(() => {
-    const completed = tasks.filter((task) => task.completed).length
+    const completed = tasks.filter((task) => task.completed).length;
     return {
       total: tasks.length,
       completed,
       active: tasks.length - completed,
-    }
-  }, [tasks])
+    };
+  }, [tasks]);
 
   const createTask = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     if (!title.trim()) {
-      setError('Title is required.')
-      return
+      setError("Title is required.");
+      return;
     }
 
     try {
-      setSubmitting(true)
-      setError('')
+      setSubmitting(true);
+      setError("");
 
       const response = await fetch(API_BASE, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           title,
           description,
         }),
-      })
+      });
 
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.message || 'Failed to create task.')
+        const data = await response.json();
+        throw new Error(data.message || "Failed to create task.");
       }
 
-      const data = await response.json()
-      setTasks((currentTasks) => [data.task, ...currentTasks])
-      setTitle('')
-      setDescription('')
+      const data = await response.json();
+      setTasks((currentTasks) => [data.task, ...currentTasks]);
+      setTitle("");
+      setDescription("");
     } catch (requestError) {
-      setError(requestError.message)
+      setError(requestError.message);
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   const toggleTask = async (task) => {
     try {
-      setError('')
+      setError("");
 
       const response = await fetch(`${API_BASE}/${task.id}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           completed: !task.completed,
         }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to update task.')
+        throw new Error("Failed to update task.");
       }
 
-      const data = await response.json()
+      const data = await response.json();
       setTasks((currentTasks) =>
         currentTasks.map((currentTask) =>
           currentTask.id === task.id ? data.task : currentTask,
         ),
-      )
+      );
     } catch (requestError) {
-      setError(requestError.message)
+      setError(requestError.message);
     }
-  }
+  };
 
   const deleteTask = async (taskId) => {
     try {
-      setError('')
+      setError("");
 
       const response = await fetch(`${API_BASE}/${taskId}`, {
-        method: 'DELETE',
-      })
+        method: "DELETE",
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to delete task.')
+        throw new Error("Failed to delete task.");
       }
 
       setTasks((currentTasks) =>
         currentTasks.filter((task) => task.id !== taskId),
-      )
+      );
     } catch (requestError) {
-      setError(requestError.message)
+      setError(requestError.message);
     }
-  }
+  };
 
   return (
     <main className="app-shell">
@@ -179,7 +179,7 @@ function App() {
           </label>
 
           <button type="submit" disabled={submitting}>
-            {submitting ? 'Adding...' : 'Add Task'}
+            {submitting ? "Adding..." : "Add Task"}
           </button>
         </form>
 
@@ -191,11 +191,11 @@ function App() {
           </div>
 
           <div className="filters" role="tablist" aria-label="Task filters">
-            {['all', 'active', 'completed'].map((item) => (
+            {["all", "active", "completed"].map((item) => (
               <button
                 key={item}
                 type="button"
-                className={filter === item ? 'filter active' : 'filter'}
+                className={filter === item ? "filter active" : "filter"}
                 onClick={() => setFilter(item)}
               >
                 {item}
@@ -213,7 +213,10 @@ function App() {
         ) : (
           <ul className="task-list">
             {visibleTasks.map((task) => (
-              <li key={task.id} className={task.completed ? 'task done' : 'task'}>
+              <li
+                key={task.id}
+                className={task.completed ? "task done" : "task"}
+              >
                 <div className="task-content">
                   <h2>{task.title}</h2>
                   {task.description ? <p>{task.description}</p> : null}
@@ -221,7 +224,7 @@ function App() {
 
                 <div className="task-actions">
                   <button type="button" onClick={() => toggleTask(task)}>
-                    {task.completed ? 'Mark Active' : 'Mark Done'}
+                    {task.completed ? "Mark Active" : "Mark Done"}
                   </button>
                   <button
                     type="button"
@@ -237,7 +240,7 @@ function App() {
         )}
       </section>
     </main>
-  )
+  );
 }
 
-export default App
+export default App;
