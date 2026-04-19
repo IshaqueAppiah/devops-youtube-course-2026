@@ -151,7 +151,7 @@ function App() {
           <h1>Task Manager</h1>
           <p className="subtitle">
             Full stack setup with React + Express. Data is stored in memory for
-            now.
+            now. CI-friendly demo change for GitHub Actions practice.
           </p>
         </header>
 
