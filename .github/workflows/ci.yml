@@ -2,9 +2,10 @@ name: build and lint
 
 on:
   push:
-  branches: [main,dev]
-  pull_request: [main,dev]
- jobs:
+    branches: [main, dev]
+  pull_request: [main, dev]
+
+jobs:
   build-and-lint:
     runs-on: ubuntu-latest
 
